@@ -3,6 +3,8 @@ defmodule FoodDiaryWeb.Schema.Types.Root do
 
   alias FoodDiaryWeb.Resolvers.User, as: UsersResolver
 
+  import_types FoodDiaryWeb.Schema.Types.User
+
   object :root_query do
     field :user, type: :user do
       arg :id, non_null(:id)
