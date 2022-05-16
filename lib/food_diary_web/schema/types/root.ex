@@ -4,6 +4,7 @@ defmodule FoodDiaryWeb.Schema.Types.Root do
   alias Crudry.Middlewares.TranslateErrors
   alias FoodDiaryWeb.Resolvers.User, as: UsersResolver
 
+  import_types FoodDiaryWeb.Schema.Types.Meal
   import_types FoodDiaryWeb.Schema.Types.User
 
   object :root_query do
