@@ -15,9 +15,10 @@ defmodule FoodDiary.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: FoodDiary.PubSub},
       # Start the Endpoint (http/https)
-      FoodDiaryWeb.Endpoint
+      FoodDiaryWeb.Endpoint,
       # Start a worker by calling: FoodDiary.Worker.start_link(arg)
       # {FoodDiary.Worker, arg}
+      {Absinthe.Subscription, FoodDiaryWeb.Endpoint}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

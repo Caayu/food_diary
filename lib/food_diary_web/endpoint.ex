@@ -1,5 +1,6 @@
 defmodule FoodDiaryWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :food_diary
+  use Absinthe.Phoenix.Endpoint
 
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.
@@ -11,6 +12,8 @@ defmodule FoodDiaryWeb.Endpoint do
   ]
 
   socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
+
+  socket "/socket", FoodDiaryWeb.FoodSocket, websocket: true, longpool: false
 
   # Serve at "/" the static files from "priv/static" directory.
   #
