@@ -1,5 +1,6 @@
 defmodule FoodDiaryWeb.SchemaTest do
   use FoodDiaryWeb.ConnCase, async: true
+  use FoodDiaryWeb.SubscriptionCase
 
   alias FoodDiary.User
   alias FoodDiary.Users
@@ -87,6 +88,62 @@ defmodule FoodDiaryWeb.SchemaTest do
                  }
                }
              } == response
+    end
+  end
+
+  describe "subscriptions" do
+    test "meals subscription", %{socket: socket} do
+      params = %{email: "caio@email.com", name: "Caio"}
+
+      {:ok, %User{id: user_id}} = Users.Create.call(params)
+
+      mutation = """
+        mutation {
+          createMeal(input: {
+            userId: #{user_id}, description: "Pizza de Frango", calories: 370.50, category: FOOD
+          }) {
+            description,
+            calories,
+            category
+          }
+        }
+      """
+
+      subscription = """
+        subscription {
+          newMeal {
+            description
+          }
+        }
+      """
+
+      # Setup Subscription
+      socket_ref = push_doc(socket, subscription)
+      assert_reply socket_ref, :ok, %{subscriptionId: subscription_id}
+
+      # Setup Mutation
+      socket_ref = push_doc(socket, mutation)
+      assert_reply socket_ref, :ok, mutation_response
+
+      expected_mutation_response = %{
+        data: %{
+          "createMeal" => %{
+            "calories" => 370.5,
+            "category" => "FOOD",
+            "description" => "Pizza de Frango"
+          }
+        }
+      }
+
+      expected_subscription_response = %{
+        result: %{data: %{"newMeal" => %{"description" => "Pizza de Frango"}}},
+        subscriptionId: subscription_id
+      }
+
+      assert mutation_response == expected_mutation_response
+
+      assert_push "subscription:data", subscription_response
+      assert subscription_response == expected_subscription_response
     end
   end
 end
