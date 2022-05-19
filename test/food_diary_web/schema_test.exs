@@ -60,4 +60,33 @@ defmodule FoodDiaryWeb.SchemaTest do
       assert response == expected_response
     end
   end
+
+  describe "users mutation" do
+    test "when all params are valid, creates the user", %{conn: conn} do
+      mutation = """
+        mutation {
+          createUser(input: {
+            email: "caio@banana.com", name: "Caio Henrique"
+          }) {
+            name
+            email
+          }
+        }
+      """
+
+      response =
+        conn
+        |> post("api/graphql", %{query: mutation})
+        |> json_response(:ok)
+
+      assert %{
+               "data" => %{
+                 "createUser" => %{
+                   "email" => "caio@banana.com",
+                   "name" => "Caio Henrique"
+                 }
+               }
+             } == response
+    end
+  end
 end
